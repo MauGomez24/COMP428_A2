@@ -55,15 +55,23 @@ void hypercube_quicksort(int dimension, int **array, int *array_size, int rank)
         // let's choose a pivot using median of three
         int neighbour = rank ^ (1 << (i-1));
         int pivot;
-        if (local_array_size == 1 || local_array_size == 2) {
-            pivot = local_array[0];
+        // P0 chooses the pivot and then will brodcast it to the others
+        if (rank == 0) {
+            if (local_array_size == 1 || local_array_size == 2) {
+                pivot = local_array[0];
+            }
+            else {
+                int low = 0;
+                int high = local_array_size - 1;
+                int mid = local_array_size / 2;
+                pivot = median_of_three(local_array[low], local_array[mid], local_array[high]);
+            }
         }
         else {
-            int low = 0;
-            int high = local_array_size - 1;
-            int mid = local_array_size / 2;
-            pivot = median_of_three(local_array[low], local_array[mid], local_array[high]);
+            pivot = 0; // default value, will be replaced once the broadcast occurs
         }
+        
+        MPI_Bcast(&pivot, 1, MPI_INT, 0, MPI_COMM_WORLD); 
     
         // partition input_array into b1 and b2
         // b1: elements <= pivot && b2: elements > pivot
