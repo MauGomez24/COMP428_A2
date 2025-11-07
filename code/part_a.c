@@ -1,3 +1,14 @@
+/**
+ * COMP 428 - Assignment 2
+ * Name: Markus A. Amalfi
+ * ID: 40237596
+ * 
+ * Name: Mauricio Gomez Iglesias
+ * ID: 40244800
+ * 
+ * This file contains the main function that will call the hypercube_quicksort algorithm
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

@@ -28,26 +28,16 @@ int main(int argc, char *argv[]){
     double start_time, end_time;
     double exec_time_seq = 0.0, exec_time_psrs = 0.0;
 
-    //------------------------------------------------------------//
-    // Step 1: Validate input
-    //------------------------------------------------------------//
     if(argc < 2){
-		
         if(rank == 0){ printf("Usage: mpirun -np <p> ./part_b <input_size>\n"); }
         MPI_Finalize();
         return 0;
-		
     }
 
-	//Get size of array to generate
     int n = atoi(argv[1]);
 
-    //------------------------------------------------------------//
-    // Step 2: Generate and benchmark sequential quicksort
-    //------------------------------------------------------------//
     int* array = NULL;
     if(rank == 0){
-		
         array = generate_array_and_shuffle(n);
         int* copy = malloc(n * sizeof(int));
         for(int i = 0; i < n; i++) copy[i] = array[i];
@@ -64,30 +54,22 @@ int main(int argc, char *argv[]){
         printf("Sequential quicksort completed in %.6f seconds\n", exec_time_seq);
         printf("------------------------------------------------\n");
 
-        free(copy);
-		
+        free(copy);	
     }
 
-    //------------------------------------------------------------//
-    // Step 3: Balanced data all to all communication
-    //------------------------------------------------------------//
     int* send_counts = NULL, *send_displs = NULL; //Send displacements
     int local_n;
 
     if(rank == 0){
-		
         send_counts = malloc(size * sizeof(int));
         send_displs = malloc(size * sizeof(int));
         int base = n / size, rem = n % size, offset = 0;
 		
         for(int i = 0; i < size; i++){
-			
             send_counts[i] = base + (i < rem);
             send_displs[i] = offset;
-            offset += send_counts[i];
-			
-        }
-		
+            offset += send_counts[i];	
+        }	
     }
 
     MPI_Scatter(send_counts, 1, MPI_INT, &local_n, 1, MPI_INT, 0, MPI_COMM_WORLD); //All to All communication
@@ -96,9 +78,6 @@ int main(int argc, char *argv[]){
     MPI_Scatterv(array, send_counts, send_displs, MPI_INT,
                  local_array, local_n, MPI_INT, 0, MPI_COMM_WORLD);
 
-    //------------------------------------------------------------//
-    // Step 4: PSRS Algorithm
-    //------------------------------------------------------------//
     MPI_Barrier(MPI_COMM_WORLD);
     start_time = MPI_Wtime();
 
@@ -131,9 +110,7 @@ int main(int argc, char *argv[]){
     recv_displs[0] = 0;
     
 	for(int i = 1; i < size; i++){
-        
 		recv_displs[i] = recv_displs[i - 1] + recv_counts[i - 1];
-	
 	}
 
     int recv_total = recv_displs[size - 1] + recv_counts[size - 1];
@@ -149,21 +126,13 @@ int main(int argc, char *argv[]){
     end_time = MPI_Wtime();
     exec_time_psrs = end_time - start_time;
 
-    //------------------------------------------------------------//
-    // Step 5: Print final timing
-    //------------------------------------------------------------//
     if(rank == 0){
-		
         printf("PSRS sorting completed in %.6f seconds\n", exec_time_psrs);
         printf("------------------------------------------------\n");
         printf("Speedup over sequential quicksort: %.2fx\n", exec_time_seq / exec_time_psrs);
         printf("------------------------------------------------\n");
-    
 	}
 
-    //------------------------------------------------------------//
-    // Step 6: Cleanup
-    //------------------------------------------------------------//
     free(local_array);
     free(samples);
     free(pivots);
@@ -174,12 +143,10 @@ int main(int argc, char *argv[]){
     free(recv_buf);
 
     if(rank == 0){
-		
         free(array);
         free(send_counts);
         free(send_displs);
         free(all_samples);
-    
 	}
 
     MPI_Finalize();

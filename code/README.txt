@@ -6,4 +6,8 @@ Compile Commands
 
 + hypercube
     - mpicc quicksort.c hypercube.c part_a.c  -o hyper -lm
-    - mpirun -np <num_of_processors> hyper <input_size>
+    - mpirun -np <num_of_processors> --hostfile /media/pkg/apini-scripts/apini_hostfile hyper <input_size>
+
++ psrs
+    -mpicc -O3 -o part_b part_b.c psrs_sort.c quicksort.c -lm
+    -mpirun -np <num_of_processors> --hostfile /media/pkg/apini-scripts/apini_hostfile ./part_b <number of inputs to generate>

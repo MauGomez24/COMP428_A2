@@ -8,6 +8,9 @@
  * 
  * COMP 428 - Assignment 2
  * Name: Markus A. Amalfi
+ * ID: 40237596
+ * 
+ * Name: Mauricio Gomez Iglesias
  * ID: 40244800
  */
 

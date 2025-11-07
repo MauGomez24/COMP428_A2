@@ -9,9 +9,11 @@
  * The functions in this file are invoked by the MPI driver (e.g., part_b.c),
  * while the sequential sorting logic depends on quicksort() defined elsewhere.
  * 
- * COMP 428 - Assignment 2
  * Name: Markus A. Amalfi
  * ID: 40237596
+ * 
+ * Name: Mauricio Gomez Iglesias
+ * ID: 40244800
  */
 
 #ifndef PSRS_SORT_H
