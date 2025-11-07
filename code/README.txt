@@ -5,5 +5,5 @@ Compile Commands
     - ./single <input_size>
 
 + hypercube
-    - mpicc hypercube.c -o hyper
-    - mpirun -np <num_of_processors> hyper <dimension>
+    - mpicc quicksort.c hypercube.c part_a.c  -o hyper -lm
+    - mpirun -np <num_of_processors> hyper <input_size>
